@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Default test(failed)">
+    <classes>
+      <class name="net.element.crm.tests.POC">
+        <methods>
+          <include name="methodTearDown"/>
+          <include name="suiteTearDown"/>
+          <include name="classSetup"/>
+          <include name="classTearDown"/>
+          <include name="methodSetup"/>
+          <include name="step03"/>
+          <include name="step02"/>
+          <include name="step01"/>
+          <include name="suiteSetup"/>
+          <include name="testTearDown"/>
+          <include name="step06"/>
+          <include name="step05"/>
+          <include name="step04"/>
+          <include name="testSetup"/>
+        </methods>
+      </class> <!-- net.element.crm.tests.POC -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->
