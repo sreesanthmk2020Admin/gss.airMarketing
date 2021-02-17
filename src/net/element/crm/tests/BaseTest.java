@@ -25,9 +25,10 @@ public abstract class BaseTest {
 	
 	@BeforeTest
 	public final void testSetup() {
-		obj_WebDriverManager.initChrome();
-		obj_WebDriverManager.launchurl();
+//		obj_WebDriverManager.initChrome();
+//		obj_WebDriverManager.launchurl();
 		System.out.println(obj_GenericComponents.getPropertyValue("sync.timeout.SHORT"));
+		obj_GenericComponents.getCellValue("testRunner");
 	}
 	
 	@BeforeClass

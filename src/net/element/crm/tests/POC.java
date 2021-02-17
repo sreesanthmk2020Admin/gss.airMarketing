@@ -2,11 +2,13 @@ package net.element.crm.tests;
 
 import org.testng.annotations.Test;
 
+import net.element.crm.pages.ElementCRM_LoginPage;
+
 public final class POC extends BaseTest {
 
 	@Test
 	private final void step01() {
-		
+		new  ElementCRM_LoginPage().signIn();
 	} 
 	
 	@Test
