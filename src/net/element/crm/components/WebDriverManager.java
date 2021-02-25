@@ -22,6 +22,7 @@ public final class WebDriverManager {
 	public final void launchurl() {
 		driver.manage().deleteAllCookies();
 		driver.get("https://elementuk-test.azurewebsites.net");
-		driver.manage().timeouts().implicitlyWait(30000, TimeUnit.MILLISECONDS);
+		driver.manage().timeouts().implicitlyWait(130000, TimeUnit.MILLISECONDS);
 	}
+
 }

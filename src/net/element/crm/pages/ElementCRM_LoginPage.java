@@ -3,6 +3,9 @@ package net.element.crm.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+
+import net.element.crm.components.WebDriverManager;
 
 public final class ElementCRM_LoginPage extends ElementCRM_BasePage {
 	
@@ -23,20 +26,21 @@ public final class ElementCRM_LoginPage extends ElementCRM_BasePage {
 	@FindBy(how = How.XPATH, xpath = "//button[text()='Sign in']")
 	private WebElement btn_SignIn;
 	
+	public ElementCRM_LoginPage() {
+		PageFactory.initElements(WebDriverManager.driver, this);
+	}
+	
 	public final boolean signIn() {
 		try {
-			if(!ele_LoginForm.isDisplayed())
-				obj_ElementHandler.clickOnElement(lnk_Here);
+			obj_ElementHandler.clickOnElement(lnk_Here);
 			
 			obj_ElementHandler.setElementText(txt_UserName, obj_GenericComponents.getPropertyValue("SIT.Username.Admin"));
 			obj_ElementHandler.setElementText(txt_Password, obj_GenericComponents.getPropertyValue("SIT.Password.Admin"));
-			obj_ElementHandler.clickOnElement(btn_SignIn);
-			
-			actualResults = !ele_LoginForm.isDisplayed();
-				
+			actualResults = obj_ElementHandler.clickOnElement(btn_SignIn);
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}
 		return actualResults;
 	}
+
 }

@@ -3,24 +3,19 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="net.element.crm.tests.POC">
+      <class name="net.element.crm.tests.POC_TC01_GrabLockIssue">
         <methods>
           <include name="methodTearDown"/>
           <include name="suiteTearDown"/>
           <include name="classSetup"/>
           <include name="classTearDown"/>
+          <include name="testSetup"/>
           <include name="methodSetup"/>
-          <include name="step03"/>
           <include name="step02"/>
-          <include name="step01"/>
           <include name="suiteSetup"/>
           <include name="testTearDown"/>
-          <include name="step06"/>
-          <include name="step05"/>
-          <include name="step04"/>
-          <include name="testSetup"/>
         </methods>
-      </class> <!-- net.element.crm.tests.POC -->
+      </class> <!-- net.element.crm.tests.POC_TC01_GrabLockIssue -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
