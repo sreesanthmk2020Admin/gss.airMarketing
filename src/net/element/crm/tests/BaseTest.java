@@ -1,9 +1,13 @@
 package net.element.crm.tests;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import org.testng.ITestContext;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -12,10 +16,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
-
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-
 import net.element.crm.components.GenericComponents;
 import net.element.crm.components.WebDriverManager;
 import net.element.crm.pages.ElementCRM_ConsolePage;
@@ -24,39 +24,40 @@ import net.element.crm.pages.ElementCRM_LoginPage;
 
 public abstract class BaseTest {
 	
-	private ExtentTest obj_htmlTestReport = null;
-	
+	protected String testResultPlaceHolder = null;
+	private static Map<String, Map<String, String>> testCaseData = null;
+	protected Map<String, String> testStepData = null;
+	private static Map<String, String> testRunner = null;
+		
 	private final WebDriverManager obj_WebDriverManager = new WebDriverManager();
-/*	final GenericComponents obj_GenericComponents = new GenericComponents();
-	final ElementCRM_LoginPage obj_ElementCRM_LoginPage = new  ElementCRM_LoginPage();
-	final ElementCRM_HomePage obj_ElementCRM_HomePage = new ElementCRM_HomePage();
-	final ElementCRM_ConsolePage obj_ElementCRM_ConsolePage = new ElementCRM_ConsolePage();*/
-
-	/*WebDriverManager obj_WebDriverManager;*/
-	private GenericComponents obj_GenericComponents;
+	private static GenericComponents obj_GenericComponents;
 	protected ElementCRM_LoginPage obj_ElementCRM_LoginPage;
 	protected ElementCRM_HomePage obj_ElementCRM_HomePage;
 	protected ElementCRM_ConsolePage obj_ElementCRM_ConsolePage;
 	
 	@BeforeSuite(alwaysRun=true)
-	public final void suiteSetup(ITestContext testContext) {
-		/*obj_WebDriverManager = new WebDriverManager();*/
-	
+	public final void suiteSetup() {
 		obj_GenericComponents = new GenericComponents();
+		testRunner = obj_GenericComponents.testRunner();
+		testCaseData = obj_GenericComponents.testData();
 		obj_GenericComponents.initTestReport();
+		GenericComponents.dateTime = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss").format(LocalDateTime.now());
 	}
 	
 	@BeforeTest
 	public final void testSetup(ITestContext obj_ITestContext) {
+		if(testRunner.get(obj_ITestContext.getName()).equalsIgnoreCase("NO"))
+			throw new SkipException(obj_ITestContext.getName() + " test case is set to No Run.");
+		
+		testStepData = testCaseData.get(obj_ITestContext.getName());
 		obj_WebDriverManager.initChrome();
 		obj_WebDriverManager.launchurl();
-		
 		
 		obj_ElementCRM_LoginPage = new  ElementCRM_LoginPage();
 		obj_ElementCRM_HomePage = new ElementCRM_HomePage();
 		obj_ElementCRM_ConsolePage = new ElementCRM_ConsolePage();
 		
-		obj_htmlTestReport = obj_GenericComponents.startTestReport(obj_ITestContext.getName());
+		obj_GenericComponents.startTestReport(obj_ITestContext.getName());
 	}
 	
 	@BeforeClass
@@ -70,13 +71,8 @@ public abstract class BaseTest {
 	}
 	
 	@AfterMethod
-	public final void methodTearDown(ITestResult result) throws IOException {
-		obj_GenericComponents.takeScreenshot();
-		if(result.getStatus() == ITestResult.SUCCESS)
-			obj_htmlTestReport.log(Status.PASS, "");
-		else if(result.getStatus() == ITestResult.FAILURE)
-			obj_htmlTestReport.log(Status.FAIL, "");
-		obj_htmlTestReport.addScreenCaptureFromPath("test123.jpg");
+	public final void methodTearDown(ITestResult testResult) throws IOException {
+		obj_GenericComponents.reportLogging(testResult, testResultPlaceHolder);
 	}
 	
 	@AfterClass

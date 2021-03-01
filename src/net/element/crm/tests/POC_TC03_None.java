@@ -3,7 +3,7 @@ package net.element.crm.tests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(testName = "POC_TC03_None")
+@Test
 public final class POC_TC03_None extends BaseTest {
 
 	@Test

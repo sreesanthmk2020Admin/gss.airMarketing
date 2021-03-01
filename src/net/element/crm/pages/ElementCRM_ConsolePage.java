@@ -25,6 +25,9 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 	private WebElement btn_Mode;
 
 	@FindBy(how=How.XPATH, xpath = "//tab[@tabtitle='Call History']//table/tbody/tr")
+	private WebElement tr_CallHsitory1;
+	
+	@FindBy(how=How.XPATH, xpath = "//tab[@tabtitle='Call History']//table/tbody/tr")
 	private List<WebElement> tr_CallHsitory;
 	
 	private final WebElement ele_OrgInformationFields(String fieldName) throws Exception {
@@ -59,12 +62,12 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 		return actualResults;
 	}
 
-	public final boolean updateCampaignDataList() {
+	public final boolean updateCampaignDataList(String Campaign, String DataList) {
 		actualResults = false;
 		try {
-			obj_ElementHandler.setDropDownValue("Campaign", "Liv'd");
+			obj_ElementHandler.setDropDownValue("Campaign", Campaign);
 			obj_GenericComponents.SyncElement(sel_DataList, "enable");
-			obj_ElementHandler.setDropDownValue("Data List", "Livd-Manufacturing ");
+			actualResults = obj_ElementHandler.setDropDownValue("Data List", DataList);
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}
@@ -75,7 +78,7 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 		actualResults = false;
 		try {
 			obj_ElementHandler.clickOnElement(btn_Generic("Grab Lock"));
-			actualResults = obj_ElementHandler.getElement(btn_Generic("Locked")).isDisplayed();
+			actualResults = obj_ElementHandler.getElement(btn_Generic("Locked")).isDisplayed() && btn_Generic("Locked").getCssValue("background-color").equals("rgba(33, 136, 56, 1)");
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}
@@ -94,17 +97,18 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 
 	public final boolean verifyOrgInformationEnabled() {
 		actualResults = false;
+		staticString_PlaceHolder = "";
 		try {
 			for(String oif: ORGINFORMATIONFIELDS) {
 				if(oif.equalsIgnoreCase("Notes"))
-					actualResults = obj_ElementHandler.getElement(ele_OrgInformationFields(oif)).findElement(By.xpath("following-sibling::textarea")).isEnabled();
+					actualResults = !Boolean.valueOf(obj_ElementHandler.getElement(ele_OrgInformationFields(oif)).findElement(By.xpath("following-sibling::textarea")).getAttribute("readonly"));
 				else
-					actualResults = obj_ElementHandler.getElement(ele_OrgInformationFields(oif)).findElement(By.xpath("following-sibling::input")).isEnabled();
+					actualResults = !Boolean.valueOf(obj_ElementHandler.getElement(ele_OrgInformationFields(oif)).findElement(By.xpath("following-sibling::input")).getAttribute("readonly"));
 				if(!actualResults)
-					staticString_PlaceHolder = staticString_PlaceHolder + ", " + oif;
-				if(!staticString_PlaceHolder.isEmpty())
-					actualResults = false;
+					staticString_PlaceHolder = staticString_PlaceHolder + oif + ", "; 
 			}
+			if(!staticString_PlaceHolder.isEmpty())
+				actualResults = false;
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}
@@ -113,19 +117,22 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 
 	public final boolean verifyPrimaryDMEnabled() {
 		actualResults = false;
+		staticString_PlaceHolder = "";
 		try {
 			for(String pdm: PRIMARYDMFIELDS) {
 				if(pdm.equalsIgnoreCase("Record New Note For Contact"))
-					actualResults = WebDriverManager.driver.findElement(By.xpath("//div[*/ul[.//a[text()='Primary DM']]]//div[not(@hidden)]/div/div/label[starts-with(text(),'Record New Note')]")).findElement(By.xpath("following-sibling::textarea")).isEnabled();
+					actualResults = !Boolean.valueOf(WebDriverManager.driver.findElement(By.xpath("//div[*/ul[.//a[text()='Primary DM']]]//div[not(@hidden)]/div/div/label[starts-with(text(),'Record New Note')]")).findElement(By.xpath("following-sibling::textarea")).getAttribute("readonly"));
 				else if(pdm.equalsIgnoreCase("Left Company"))
-					actualResults = WebDriverManager.driver.findElement(By.xpath("//div[*/ul[.//a[text()='Primary DM']]]//div[not(@hidden)]/div/div/label[starts-with(text(),'Left')]")).findElement(By.xpath("preceding-sibling::input")).isEnabled();
+					actualResults = !Boolean.valueOf(WebDriverManager.driver.findElement(By.xpath("//div[*/ul[.//a[text()='Primary DM']]]//div[not(@hidden)]/div/div/label[starts-with(text(),'Left')]")).findElement(By.xpath("preceding-sibling::input")).getAttribute("readonly"));
+				else if(pdm.equalsIgnoreCase("Contact Type"))
+					actualResults = !Boolean.valueOf(obj_ElementHandler.getElement(ele_PrimaryDMFields(pdm)).findElement(By.xpath("following-sibling::div//input")).getAttribute("disabled"));
 				else
-					actualResults = obj_ElementHandler.getElement(ele_PrimaryDMFields(pdm)).findElement(By.xpath("following-sibling::div//input")).isEnabled();
+					actualResults = !Boolean.valueOf(obj_ElementHandler.getElement(ele_PrimaryDMFields(pdm)).findElement(By.xpath("following-sibling::div//input")).getAttribute("readonly"));
 				if(!actualResults)
-					staticString_PlaceHolder = staticString_PlaceHolder + ", " + pdm;
-				if(!staticString_PlaceHolder.isEmpty())
-					actualResults = false;
+					staticString_PlaceHolder = staticString_PlaceHolder + pdm + ", "; 
 			}
+			if(!staticString_PlaceHolder.isEmpty())
+				actualResults = false;
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}
@@ -154,25 +161,16 @@ public final class ElementCRM_ConsolePage extends ElementCRM_BasePage {
 	public final boolean verifyCompanyPhoneNumberCall() {
 		actualResults = false;
 		try {
+			System.out.println("1");
 			int_PlaceHolder1 = tr_CallHsitory.size();
+			System.out.println("2");
 			obj_ElementHandler.clickOnElement(ele_PrimaryDMFields("Company Phone Number").findElement(By.xpath("parent::div//a")));
 			
 			Thread.sleep(Integer.valueOf(obj_GenericComponents.getPropertyValue("sync.timeout.SHORT")));
 			new Robot().keyPress(KeyEvent.VK_ENTER);
 			
-			Thread.sleep(Integer.valueOf(obj_GenericComponents.getPropertyValue("sync.timeout.SHORT")));
 			int_PlaceHolder2 = tr_CallHsitory.size();
 			actualResults = int_PlaceHolder2 == int_PlaceHolder1 + 1;
-		} catch (Exception e) {
-			obj_GenericComponents.exceptionHandler(e);
-		}
-		return actualResults;
-	}
-
-	public final boolean xxx() {
-		actualResults = false;
-		try {
-
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
 		}

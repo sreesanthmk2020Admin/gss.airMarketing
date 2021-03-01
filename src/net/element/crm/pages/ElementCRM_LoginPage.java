@@ -34,8 +34,8 @@ public final class ElementCRM_LoginPage extends ElementCRM_BasePage {
 		try {
 			obj_ElementHandler.clickOnElement(lnk_Here);
 			
-			obj_ElementHandler.setElementText(txt_UserName, obj_GenericComponents.getPropertyValue("SIT.Username.Admin"));
-			obj_ElementHandler.setElementText(txt_Password, obj_GenericComponents.getPropertyValue("SIT.Password.Admin"));
+			obj_ElementHandler.setElementText(txt_UserName, obj_GenericComponents.getPropertyValue("TEST.Username.Admin"));
+			obj_ElementHandler.setElementText(txt_Password, obj_GenericComponents.getPropertyValue("TEST.Password.Admin"));
 			actualResults = obj_ElementHandler.clickOnElement(btn_SignIn);
 		} catch (Exception e) {
 			obj_GenericComponents.exceptionHandler(e);
