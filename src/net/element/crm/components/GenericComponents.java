@@ -48,6 +48,7 @@ public final class GenericComponents {
 	public final void takeScreenshot() {
 		try {
 			screenshotLocation = System.getProperty("user.dir") + "/" + getPropertyValue("screenshot.Location") + "/" + dateTime + "/" + testCaseName + ++incrementor +".jpg";
+			System.out.println("********************" + System.getProperty("user.dir") );
 			File screenshotFile = ((TakesScreenshot) WebDriverManager.driver).getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(screenshotFile, new File(screenshotLocation));
 		} catch (Exception e) {
