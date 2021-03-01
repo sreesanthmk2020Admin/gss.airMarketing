@@ -47,7 +47,7 @@ public final class GenericComponents {
 
 	public final void takeScreenshot() {
 		try {
-			screenshotLocation = getPropertyValue("screenshot.Location") + "/" + dateTime + "/" + testCaseName + ++incrementor +".jpg";
+			screenshotLocation = System.getProperty("user.dir") + "/" + getPropertyValue("screenshot.Location") + "/" + dateTime + "/" + testCaseName + ++incrementor +".jpg";
 			File screenshotFile = ((TakesScreenshot) WebDriverManager.driver).getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(screenshotFile, new File(screenshotLocation));
 		} catch (Exception e) {
@@ -143,7 +143,7 @@ public final class GenericComponents {
 	public final void tearDownTestReport() {
 		try {
 			obj_ExtentHtmlReporter.flush();
-
+			
 			if(!new File(getPropertyValue("report.Location")).exists())
 				FileUtils.forceMkdir(new File(getPropertyValue("report.Location")));
 			FileUtils.copyFile(new File("Dashboard.html"), new File(getPropertyValue("report.Location") + "/" + dateTime + ".html"));
