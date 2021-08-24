@@ -1,0 +1,100 @@
+package net.element.crm.tests;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+import org.testng.ITestResult;
+import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
+import net.element.crm.components.GenericComponents;
+import net.element.crm.components.WebDriverManager;
+import net.element.crm.pages.ElementCRM_AlertsPage;
+import net.element.crm.pages.ElementCRM_ConsolePage;
+import net.element.crm.pages.ElementCRM_HomePage;
+import net.element.crm.pages.ElementCRM_LoginPage;
+
+public abstract class BaseTest {
+	
+	protected String testResultPlaceHolder = null;
+	private static Map<String, Map<String, String>> testCaseData = null;
+	protected Map<String, String> testStepData = null;
+	private static Map<String, String> testRunner = null;
+	private String testCaseName = null;
+		
+	private final WebDriverManager obj_WebDriverManager = new WebDriverManager();
+	private static GenericComponents obj_GenericComponents;
+	protected ElementCRM_LoginPage obj_ElementCRM_LoginPage;
+	protected ElementCRM_HomePage obj_ElementCRM_HomePage;
+	protected ElementCRM_ConsolePage obj_ElementCRM_ConsolePage;
+	protected ElementCRM_AlertsPage obj_ElementCRM_AlertsPage;
+	
+	@BeforeSuite(alwaysRun=true)
+	protected final void suiteSetup() {
+		obj_GenericComponents = new GenericComponents();
+		testRunner = obj_GenericComponents.testRunner();
+		testCaseData = obj_GenericComponents.testData();
+		obj_GenericComponents.initTestReport();
+		GenericComponents.dateTime = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss").format(LocalDateTime.now());
+	}
+	
+	@BeforeTest
+	protected final void testSetup() {
+		testCaseName = this.getClass().getSimpleName();
+		if(testRunner.get(testCaseName).equalsIgnoreCase("NO"))
+			throw new SkipException(testCaseName + " test case is set to No Run.");
+		
+		testStepData = testCaseData.get(testCaseName);
+		obj_WebDriverManager.initChrome();
+		obj_WebDriverManager.launchurl();
+		
+		obj_ElementCRM_LoginPage = new  ElementCRM_LoginPage();
+		obj_ElementCRM_HomePage = new ElementCRM_HomePage();
+		obj_ElementCRM_ConsolePage = new ElementCRM_ConsolePage();
+		obj_ElementCRM_AlertsPage = new ElementCRM_AlertsPage();
+		
+		obj_GenericComponents.startTestReport(testCaseName);
+	}
+	
+	@BeforeClass()
+	protected final void classSetup() {
+		
+	}
+	
+	@BeforeMethod
+	protected final void methodSetup() {
+		GenericComponents.screenshotTaken = false;
+	}
+
+	@AfterMethod
+	protected final void methodTearDown(ITestResult testResult) throws IOException {
+		obj_GenericComponents.reportLogging(testResult, testResult.getName().toUpperCase() + ": " + testResultPlaceHolder);
+	}
+	
+	@AfterClass
+	protected final void classTearDown() {
+		
+	}
+	
+	@AfterTest
+	protected final void testTearDown() {
+		WebDriverManager.driver.quit();
+		obj_GenericComponents.endTestReport();
+	}
+	
+	@AfterSuite
+	protected final void suiteTearDown() {
+		WebDriverManager.driver.quit();
+		obj_GenericComponents.tearDownTestReport();
+	}
+
+}
