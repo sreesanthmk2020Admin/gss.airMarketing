@@ -1,0 +1,100 @@
+package net.element.crm.tests;
+
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import net.element.crm.components.RetryAnalyzer;
+import net.element.crm.pages.ElementCRM_ConsolePage;
+
+@Test(enabled = true, groups= {"Console"})
+public final class TC04_Console_Left_Company extends BaseTest {
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class, dataProvider = "loginCredentials")
+	private final void step00(String userName, String password) {
+		testResultPlaceHolder = "Login failed, user unable to login using user name: " + userName;
+		Assert.assertTrue(obj_ElementCRM_LoginPage.signIn(userName, password));
+		testResultPlaceHolder = "User is able to login successfully using user name: " + userName;
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step01() {
+		testResultPlaceHolder = "Did not navigate to console page";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.openConsolePage());
+		testResultPlaceHolder = "Successfully navigated to 'Console page'";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step03() {
+		testResultPlaceHolder = "Mode is not in User, verification failed";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.verifyModeUser());
+		testResultPlaceHolder = "Successfully verified user mode";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class, dataProvider = "campaignDataList")
+	private final void step04(String paramter1, String parameter2) {
+		testResultPlaceHolder = "Did not update campaign '" + paramter1 + "' and datalist '" + parameter2 + "'";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.updateCampaignDataList(paramter1, parameter2));
+		testResultPlaceHolder = "Successfully updated campaign '" + paramter1 + "' and datalist '" + parameter2 + "'";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step05() {
+		testResultPlaceHolder = "User did not click on 'GrabLock'";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.clickOnGrabLock());
+		testResultPlaceHolder = "Successfully clicked on 'Grablock' button and text displayed as 'Locked' with green backgrounvd color";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step06() {
+		testResultPlaceHolder = ElementCRM_ConsolePage.staticString_PlaceHolder + " Primary DM fields are not enabled, verification failed";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.verifyPrimaryDMEnabled());
+		testResultPlaceHolder = "Successfully verified, all the Primary DM fields are enabled";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step07() {
+		testResultPlaceHolder = "User not able to select Left Company checkbox";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.checkLeftCompany(true));
+		testResultPlaceHolder = "Succssfully selected left company checkbox and Warning message displayed";				
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step08() {
+		testResultPlaceHolder = ElementCRM_ConsolePage.staticString_PlaceHolder + " Primary DM fields are not disabled, verification failed";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.verifyPrimaryDMDisabled());
+		testResultPlaceHolder = "Successfully verified, all the Primary DM fields are disabled";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step09() {
+		testResultPlaceHolder = "User not able to uncheck Left Company checkbox";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.checkLeftCompany(false));
+		testResultPlaceHolder = "Succssfully unchecked left company checkbox and Warning message displayed";				
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void step10() {
+		testResultPlaceHolder = ElementCRM_ConsolePage.staticString_PlaceHolder + " Primary DM fields are not enabled, verification failed";
+		Assert.assertTrue(obj_ElementCRM_ConsolePage.verifyPrimaryDMEnabled());
+		testResultPlaceHolder = "Successfully verified, all the Primary DM fields are enabled";
+	}
+	
+	@Test(retryAnalyzer=RetryAnalyzer.class)
+	private final void stepXX() {
+		testResultPlaceHolder = "Logout failed, user unable to logout";
+		Assert.assertTrue(obj_ElementCRM_HomePage.logout());
+		testResultPlaceHolder = "User is able to logout successfully";
+	}
+	
+	@DataProvider(name = "loginCredentials")
+	private final Object[][] loginCredentials() {
+		return new Object[][] {{obj_ElementCRM_HomePage.obj_GenericComponents.getPropertyValue(testStepData.get("Login User")), obj_ElementCRM_HomePage.obj_GenericComponents.getPropertyValue(testStepData.get("Login User").replace("Username", "Password"))}};
+	}
+	
+	@DataProvider(name = "campaignDataList")
+	private Object[][] campaignDataList() {
+		return new Object[][] {{testStepData.get("Campaign"), testStepData.get("Data List")}};
+	}
+	
+}
